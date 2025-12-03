@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Transporte</title>
+    <style>
+        :root {
+            --bg: #050816;
+            --bg-card: #111827;
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #1f2937;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #1f2937 0, transparent 50%),
+                var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 960px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+            padding: 1.75rem 2.25rem 2.25rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .title-block h1 {
+            font-size: 1.6rem;
+            margin: 0 0 0.3rem;
+        }
+
+        .title-block p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+            margin-top: 0.25rem;
+        }
+
+        .tag span {
+            font-size: 0.9rem;
+        }
+
+        .tag-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+            gap: 1.75rem;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .api-list {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.6rem;
+        }
+
+        .api-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.65rem 0.9rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .api-item-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .api-path {
+            font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+            font-size: 0.82rem;
+        }
+
+        .api-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .api-method {
+            font-size: 0.7rem;
+            font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            color: #6ee7b7;
+        }
+
+        .side-panel {
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 1rem 1.1rem 1.1rem;
+            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 55%);
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, border-color 0.1s ease;
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: rgba(148, 163, 184, 0.7);
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border-color: rgba(248, 113, 113, 0.75);
+            color: var(--danger);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+            filter: brightness(1.03);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+            filter: brightness(0.98);
+        }
+
+        .btn-icon {
+            font-size: 1rem;
+            line-height: 0;
+        }
+
+        .hint {
+            margin-top: 0.9rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .hint code {
+            font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+            font-size: 0.75rem;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 780px) {
+            body {
+                padding: 1rem;
+            }
+            .card {
+                padding: 1.25rem 1.4rem 1.6rem;
+            }
+            .main-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .user-info {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+
+        <header class="header">
+            <div class="title-block">
+                <h1>Gestión de Transporte</h1>
+                <p>Panel de acceso a la API de rutas, buses, conductores y viajes programados.</p>
+            </div>
+
+            <div class="user-info">
+                <div>Sesión iniciada como <span class="user-name">{{ user.username }}</span></div>
+                <div class="tag">
+                    <span class="tag-dot"></span>
+                    <span>Autenticado</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="main-grid">
+
+            <!-- Columna izquierda: endpoints API -->
+            <div>
+                <h2 class="section-title">Endpoints principales</h2>
+                <div class="api-list">
+                    <a class="api-item" href="/api/terminales/">
+                        <div class="api-item-main">
+                            <span class="api-path">GET /api/terminales/</span>
+                            <span class="api-desc">Listado y gestión de terminales.</span>
+                        </div>
+                        <span class="api-method">LIST</span>
+                    </a>
+
+                    <a class="api-item" href="/api/rutas/">
+                        <div class="api-item-main">
+                            <span class="api-path">GET /api/rutas/</span>
+                            <span class="api-desc">Rutas entre terminales, distancia y duración estimada.</span>
+                        </div>
+                        <span class="api-method">LIST</span>
+                    </a>
+
+                    <a class="api-item" href="/api/buses/">
+                        <div class="api-item-main">
+                            <span class="api-path">GET /api/buses/</span>
+                            <span class="api-desc">Buses registrados y su capacidad.</span>
+                        </div>
+                        <span class="api-method">LIST</span>
+                    </a>
+
+                    <a class="api-item" href="/api/conductores/">
+                        <div class="api-item-main">
+                            <span class="api-path">GET /api/conductores/</span>
+                            <span class="api-desc">Conductores habilitados y su licencia.</span>
+                        </div>
+                        <span class="api-method">LIST</span>
+                    </a>
+
+                    <a class="api-item" href="/api/viajes/">
+                        <div class="api-item-main">
+                            <span class="api-path">GET /api/viajes/</span>
+                            <span class="api-desc">Viajes programados con filtros por origen, destino y fecha.</span>
+                        </div>
+                        <span class="api-method">LIST</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Columna derecha: accesos rápidos -->
+            <aside class="side-panel">
+                <h2 class="section-title">Accesos rápidos</h2>
+
+                <div class="btn-row">
+                    <a class="btn" href="/swagger/">
+                        <span class="btn-icon">📘</span>
+                        <span>Swagger UI</span>
+                    </a>
+                    <a class="btn btn-outline" href="/redoc/">
+                        <span class="btn-icon">📄</span>
+                        <span>Redoc</span>
+                    </a>
+                    <a class="btn btn-outline" href="/admin/">
+                        <span class="btn-icon">🛠️</span>
+                        <span>Panel admin</span>
+                    </a>
+                </div>
+
+                <div class="btn-row" style="margin-top: 1rem;">
+                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <span class="btn-icon">⏻</span>
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </form>
+                </div>
+
+                <p class="hint">
+                    Tip: desde Swagger puedes obtener un
+                    <code>access token</code> en <code>/api/token/</code> y probar la API con
+                    autenticación <code>Bearer &lt;token&gt;</code>.  
+                    Desde aquí, como ya has iniciado sesión, también puedes navegar directamente a cada endpoint REST.
+                </p>
+            </aside>
+
+        </section>
+    </div>
+</div>
+</body>
+</html>

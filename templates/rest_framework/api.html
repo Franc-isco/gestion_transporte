@@ -1,0 +1,27 @@
+{% extends "rest_framework/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{# Título de la pestaña #}
+{% block title %}Gestión de Transporte · API REST{% endblock %}
+
+{# Links de usuario (derecha del header) #}
+{% block userlinks %}
+    {% if user.is_authenticated %}
+        <li class="navbar-text">
+            Conectado como <strong>{{ user.username }}</strong>
+        </li>
+        <li>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-link navbar-btn"
+                        style="padding: 4px 10px;">
+                    Salir
+                </button>
+            </form>
+        </li>
+    {% else %}
+        <li><a href="{% url 'login' %}">{% trans "Login" %}</a></li>
+    {% endif %}
+{% endblock %}
