@@ -1,7 +1,15 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from rut_chile import rut_chile
 
+def validar_rut_chile(value):
+    """
+    Usa la librería rut-chile para validar el RUT.
+    Acepta formatos tipo 11111111-1, 9.868.503-0, etc.
+    """
+    if not rut_chile.is_valid_rut(value):
+        raise ValidationError("RUT no válido.")
 
 class Terminal(models.Model):
     nombre = models.CharField(max_length=100)
@@ -59,15 +67,20 @@ class Bus(models.Model):
 
 
 class Conductor(models.Model):
-    rut = models.CharField(max_length=12, unique=True)
+    rut = models.CharField(
+        max_length=12,
+        unique=True,
+        validators=[validar_rut_chile],
+    )
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=20)
-    licencia_tipo = models.CharField(max_length=5)
+    telefono = models.CharField(max_length=20, blank=True)
+    licencia_tipo = models.CharField(max_length=10)
     activo = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.rut}"
+        return f"{self.nombre} {self.apellido} ({self.rut})"
+
 
 
 class ViajeProgramado(models.Model):
@@ -120,9 +133,6 @@ class ViajeProgramado(models.Model):
                 "La fecha/hora de llegada estimada debe ser posterior a la salida."
             )
 
-        # Podríamos validar también que duracion_estimada_min
-        # sea coherente con la diferencia entre salida y llegada,
-        # pero eso lo podemos dejar como validación extra en el serializer.
 
     def __str__(self):
         return f"Viaje {self.id} - {self.ruta} - {self.fecha_hora_salida}"
