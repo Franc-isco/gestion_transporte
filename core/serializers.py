@@ -39,7 +39,6 @@ class ConductorSerializer(serializers.ModelSerializer):
 
 
 class ViajeProgramadoSerializer(serializers.ModelSerializer):
-    # Opcional: campos de solo lectura para mostrar nombres en la API
     ruta_codigo = serializers.ReadOnlyField(source="ruta.codigo")
     bus_patente = serializers.ReadOnlyField(source="bus.patente")
     conductor_nombre = serializers.ReadOnlyField(source="conductor.nombre")
@@ -83,7 +82,7 @@ class ViajeProgramadoSerializer(serializers.ModelSerializer):
                 {"fecha_hora_llegada_estimada": "La llegada debe ser posterior a la salida."}
             )
 
-        # Si faltan datos básicos, no seguimos validando solapamientos
+        # Si faltan datos básicos, no seguimos validando 
         if not (bus and conductor and salida and llegada):
             return attrs
 
